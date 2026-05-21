@@ -82,14 +82,14 @@ Use the Asana MCP tools to fetch the task. Extract:
 
 From the task title, produce:
 - **branch name**: `feature/<slug>` where slug is the title lowercased, spaces replaced with `-`, special chars removed. Example: "Add campaign filters" → `feature/add-campaign-filters`
-- **worktree directory**: `../<branch-slug>` relative to this repo. Example: `../add-campaign-filters`
+- **worktree directory**: `.worktrees/<branch-slug>` inside the repo. Example: `.worktrees/add-campaign-filters`
 
 ### Step 3 — Create the worktree
 
 From the root of this repository:
 
 ```bash
-git worktree add ../<branch-slug> -b feature/<slug>
+git worktree add .worktrees/<branch-slug> -b feature/<slug>
 ```
 
 Verify it was created:
@@ -100,7 +100,7 @@ git worktree list
 ### Step 4 — Set up the worktree
 
 ```bash
-cd ../<branch-slug>
+cd .worktrees/<branch-slug>
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
@@ -128,7 +128,7 @@ Use the resulting port for the rest of the workflow.
 
 ### Step 6 — Analyse, plan, implement
 
-Work inside the worktree directory (`../<branch-slug>`).
+Work inside the worktree directory (`.worktrees/<branch-slug>`).
 
 - Read the full task description carefully
 - Explore the relevant files to understand what needs to change before writing any code
@@ -210,7 +210,7 @@ kill $(cat /tmp/audio-api-<PORT>.pid) && rm /tmp/audio-api-<PORT>.pid
 ## Notes for agents
 
 - Work entirely inside the worktree directory after Step 3. Do not modify files in the original repo.
-- The original repo is the base. Treat it as read-only during task execution.
+- The repo root is the base. Treat files outside `.worktrees/` as read-only during task execution.
 - If the worktree already exists for a branch, skip Step 3 and continue from Step 4.
 - If the port check finds no free port in range 8001–8010, report this to the user and stop.
 - If tests fail after implementation, fix them before proceeding to Step 7. Do not ship failing tests.
