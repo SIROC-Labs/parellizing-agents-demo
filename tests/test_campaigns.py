@@ -37,3 +37,77 @@ def test_list_campaigns_returns_seed_data(client):
     response = client.get("/campaigns")
     assert response.status_code == 200
     assert len(response.json()) > 0
+
+
+# --- transition tests ---
+
+def _create(client, name="Test Campaign", client_name="Brand X"):
+    return client.post("/campaigns", json={"name": name, "client_name": client_name}).json()
+
+
+def test_transition_draft_to_active(client):
+    campaign = _create(client)
+    response = client.patch(f"/campaigns/{campaign['id']}/status", json={"status": "active"})
+    assert response.status_code == 200
+    assert response.json()["status"] == "active"
+
+
+def test_transition_active_to_paused(client):
+    campaign = _create(client)
+    client.patch(f"/campaigns/{campaign['id']}/status", json={"status": "active"})
+    response = client.patch(f"/campaigns/{campaign['id']}/status", json={"status": "paused"})
+    assert response.status_code == 200
+    assert response.json()["status"] == "paused"
+
+
+def test_transition_active_to_completed(client):
+    campaign = _create(client)
+    client.patch(f"/campaigns/{campaign['id']}/status", json={"status": "active"})
+    response = client.patch(f"/campaigns/{campaign['id']}/status", json={"status": "completed"})
+    assert response.status_code == 200
+    assert response.json()["status"] == "completed"
+
+
+def test_transition_paused_to_active(client):
+    campaign = _create(client)
+    client.patch(f"/campaigns/{campaign['id']}/status", json={"status": "active"})
+    client.patch(f"/campaigns/{campaign['id']}/status", json={"status": "paused"})
+    response = client.patch(f"/campaigns/{campaign['id']}/status", json={"status": "active"})
+    assert response.status_code == 200
+    assert response.json()["status"] == "active"
+
+
+def test_transition_paused_to_completed(client):
+    campaign = _create(client)
+    client.patch(f"/campaigns/{campaign['id']}/status", json={"status": "active"})
+    client.patch(f"/campaigns/{campaign['id']}/status", json={"status": "paused"})
+    response = client.patch(f"/campaigns/{campaign['id']}/status", json={"status": "completed"})
+    assert response.status_code == 200
+    assert response.json()["status"] == "completed"
+
+
+def test_invalid_transition_draft_to_paused(client):
+    campaign = _create(client)
+    response = client.patch(f"/campaigns/{campaign['id']}/status", json={"status": "paused"})
+    assert response.status_code == 422
+    assert "draft" in response.json()["detail"]
+
+
+def test_invalid_transition_draft_to_completed(client):
+    campaign = _create(client)
+    response = client.patch(f"/campaigns/{campaign['id']}/status", json={"status": "completed"})
+    assert response.status_code == 422
+
+
+def test_invalid_transition_completed_to_active(client):
+    campaign = _create(client)
+    client.patch(f"/campaigns/{campaign['id']}/status", json={"status": "active"})
+    client.patch(f"/campaigns/{campaign['id']}/status", json={"status": "completed"})
+    response = client.patch(f"/campaigns/{campaign['id']}/status", json={"status": "active"})
+    assert response.status_code == 422
+    assert "none" in response.json()["detail"].lower()
+
+
+def test_transition_not_found(client):
+    response = client.patch("/campaigns/does-not-exist/status", json={"status": "active"})
+    assert response.status_code == 404

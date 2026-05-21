@@ -10,6 +10,10 @@ class CampaignCreate(BaseModel):
     client_name: str
 
 
+class CampaignTransition(BaseModel):
+    status: CampaignStatus
+
+
 class CampaignRead(BaseModel):
     id: str
     name: str
