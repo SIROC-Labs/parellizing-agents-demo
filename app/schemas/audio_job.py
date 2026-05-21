@@ -20,3 +20,13 @@ class AudioJobRead(BaseModel):
     target_duration_seconds: int
     status: AudioJobStatus
     created_at: datetime
+    output_url: str | None = None
+    actual_duration_seconds: int | None = None
+    error_message: str | None = None
+
+
+class AudioJobUpdate(BaseModel):
+    status: AudioJobStatus
+    output_url: str | None = None
+    actual_duration_seconds: int | None = None
+    error_message: str | None = None

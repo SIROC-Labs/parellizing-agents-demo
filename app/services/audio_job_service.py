@@ -5,8 +5,8 @@ from app.models.audio_job import AudioJob, AudioJobStatus
 from app.repositories.audio_job_repository import AudioJobRepository
 from app.repositories.campaign_repository import CampaignRepository
 from app.repositories.voice_repository import VoiceRepository
-from app.schemas.audio_job import AudioJobCreate
-from app.services.errors import NotFound
+from app.schemas.audio_job import AudioJobCreate, AudioJobUpdate
+from app.services.errors import InvalidTransition, NotFound
 
 
 class AudioJobService:
@@ -42,3 +42,30 @@ class AudioJobService:
         if job is None:
             raise NotFound(f"AudioJob {job_id} not found")
         return job
+
+    def update(self, job_id: str, data: AudioJobUpdate) -> AudioJob:
+        job = self.get(job_id)
+
+        terminal = {AudioJobStatus.COMPLETED, AudioJobStatus.FAILED}
+        if job.status in terminal:
+            raise InvalidTransition(f"Job {job_id} is already in a terminal state ({job.status})")
+
+        if data.status == AudioJobStatus.COMPLETED:
+            if not data.output_url or data.actual_duration_seconds is None:
+                raise InvalidTransition("Completing a job requires output_url and actual_duration_seconds")
+            updated = job.model_copy(update={
+                "status": data.status,
+                "output_url": data.output_url,
+                "actual_duration_seconds": data.actual_duration_seconds,
+            })
+        elif data.status == AudioJobStatus.FAILED:
+            if not data.error_message:
+                raise InvalidTransition("Failing a job requires error_message")
+            updated = job.model_copy(update={
+                "status": data.status,
+                "error_message": data.error_message,
+            })
+        else:
+            updated = job.model_copy(update={"status": data.status})
+
+        return self._repo.update(updated)

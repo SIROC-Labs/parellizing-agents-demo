@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Request
 
 from app import dependencies, seed
 from app.routers import audio_jobs, campaigns, health, voices
-from app.services.errors import NotFound
+from app.services.errors import InvalidTransition, NotFound
 
 app = FastAPI(title="audio-campaign-api")
 
@@ -10,6 +10,11 @@ app = FastAPI(title="audio-campaign-api")
 @app.exception_handler(NotFound)
 def _not_found(_: Request, exc: NotFound) -> HTTPException:
     raise HTTPException(status_code=404, detail=str(exc))
+
+
+@app.exception_handler(InvalidTransition)
+def _invalid_transition(_: Request, exc: InvalidTransition) -> HTTPException:
+    raise HTTPException(status_code=409, detail=str(exc))
 
 
 app.include_router(health.router)
