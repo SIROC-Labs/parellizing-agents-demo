@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel
 
 
@@ -8,3 +10,5 @@ class Voice(BaseModel):
     locale: str
     supports_sts: bool
     supports_tts: bool
+    gender: Literal["male", "female", "neutral"]
+    style: str
