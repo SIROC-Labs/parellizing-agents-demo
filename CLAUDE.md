@@ -111,7 +111,18 @@ Verify setup:
 .venv/bin/python -c "import fastapi; print('ok')"
 ```
 
-### Step 5 — Find a free port
+### Step 5 — Analyse, plan, implement
+
+Work inside the worktree directory (`.worktrees/<branch-slug>`).
+
+Follow the standard feature development workflow:
+- Read the full task description carefully
+- Explore the relevant files in the codebase to understand what needs to change
+- Use `superpowers:writing-plans` to create an implementation plan
+- Use `superpowers:executing-plans` or `superpowers:subagent-driven-development` to implement it
+- Run `pytest -v` after implementation and fix any failures before continuing
+
+### Step 6 — Find a free port
 
 Check ports 8001 through 8010 and use the first one that is not in use:
 
@@ -124,22 +135,9 @@ for port in 8001 8002 8003 8004 8005 8006 8007 8008 8009 8010; do
 done
 ```
 
-Use the resulting port for the rest of the workflow.
-
-### Step 6 — Analyse, plan, implement
-
-Work inside the worktree directory (`.worktrees/<branch-slug>`).
-
-Follow the standard feature development workflow:
-- Read the full task description carefully
-- Explore the relevant files in the codebase to understand what needs to change
-- Use `superpowers:writing-plans` to create an implementation plan
-- Use `superpowers:executing-plans` or `superpowers:subagent-driven-development` to implement it
-- Run `pytest -v` after implementation and fix any failures before continuing
-
 ### Step 7 — Start the server
 
-From the worktree directory, start the server in the background on the port found in Step 5:
+From the worktree directory, start the server in the background on the port found in Step 6:
 
 ```bash
 nohup .venv/bin/uvicorn app.main:app --port <PORT> > /tmp/audio-api-<PORT>.log 2>&1 &
