@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import Enum
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -19,3 +20,6 @@ class AudioJob(BaseModel):
     target_duration_seconds: int
     status: AudioJobStatus
     created_at: datetime
+    output_url: Optional[str] = None
+    actual_duration_seconds: Optional[int] = None
+    error_message: Optional[str] = None

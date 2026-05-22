@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -12,6 +13,13 @@ class AudioJobCreate(BaseModel):
     target_duration_seconds: int
 
 
+class AudioJobUpdate(BaseModel):
+    status: AudioJobStatus
+    output_url: Optional[str] = None
+    actual_duration_seconds: Optional[int] = None
+    error_message: Optional[str] = None
+
+
 class AudioJobRead(BaseModel):
     id: str
     campaign_id: str
@@ -20,3 +28,6 @@ class AudioJobRead(BaseModel):
     target_duration_seconds: int
     status: AudioJobStatus
     created_at: datetime
+    output_url: Optional[str] = None
+    actual_duration_seconds: Optional[int] = None
+    error_message: Optional[str] = None

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 
 from app.dependencies import get_audio_job_service
-from app.schemas.audio_job import AudioJobCreate, AudioJobRead
+from app.schemas.audio_job import AudioJobCreate, AudioJobRead, AudioJobUpdate
 from app.services.audio_job_service import AudioJobService
 
 router = APIRouter(prefix="/audio-jobs", tags=["audio-jobs"])
@@ -15,3 +15,8 @@ def create_audio_job(payload: AudioJobCreate, service: AudioJobService = Depends
 @router.get("/{job_id}", response_model=AudioJobRead)
 def get_audio_job(job_id: str, service: AudioJobService = Depends(get_audio_job_service)):
     return service.get(job_id)
+
+
+@router.patch("/{job_id}", response_model=AudioJobRead)
+def update_audio_job(job_id: str, payload: AudioJobUpdate, service: AudioJobService = Depends(get_audio_job_service)):
+    return service.update(job_id, payload)

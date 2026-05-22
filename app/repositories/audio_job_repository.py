@@ -12,5 +12,9 @@ class AudioJobRepository:
     def get(self, job_id: str) -> AudioJob | None:
         return self._items.get(job_id)
 
+    def update(self, job: AudioJob) -> AudioJob:
+        self._items[job.id] = job
+        return job
+
     def list(self) -> list[AudioJob]:
         return list(self._items.values())
