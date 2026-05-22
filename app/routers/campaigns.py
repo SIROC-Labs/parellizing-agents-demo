@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.dependencies import get_campaign_service
-from app.schemas.campaign import CampaignCreate, CampaignRead
+from app.schemas.campaign import CampaignCreate, CampaignRead, CampaignTransition
 from app.services.campaign_service import CampaignService
+from app.services.errors import InvalidTransition
 
 router = APIRouter(prefix="/campaigns", tags=["campaigns"])
 
@@ -20,3 +21,15 @@ def create_campaign(payload: CampaignCreate, service: CampaignService = Depends(
 @router.get("/{campaign_id}", response_model=CampaignRead)
 def get_campaign(campaign_id: str, service: CampaignService = Depends(get_campaign_service)):
     return service.get(campaign_id)
+
+
+@router.patch("/{campaign_id}/status", response_model=CampaignRead)
+def transition_campaign_status(
+    campaign_id: str,
+    payload: CampaignTransition,
+    service: CampaignService = Depends(get_campaign_service),
+):
+    try:
+        return service.transition_status(campaign_id, payload.status)
+    except InvalidTransition as exc:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc))
