@@ -12,5 +12,9 @@ class CampaignRepository:
     def get(self, campaign_id: str) -> Campaign | None:
         return self._items.get(campaign_id)
 
+    def update(self, campaign: Campaign) -> Campaign:
+        self._items[campaign.id] = campaign
+        return campaign
+
     def list(self) -> list[Campaign]:
         return list(self._items.values())

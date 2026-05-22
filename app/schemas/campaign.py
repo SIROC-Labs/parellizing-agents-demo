@@ -16,3 +16,7 @@ class CampaignRead(BaseModel):
     client_name: str
     status: CampaignStatus
     created_at: datetime
+
+
+class CampaignTransition(BaseModel):
+    status: CampaignStatus
