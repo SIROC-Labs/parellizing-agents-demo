@@ -21,3 +21,23 @@ def test_seeded_voices_include_known_entries(client):
     names = {v["name"] for v in voices}
     assert "Aria" in names
     assert "Marco" in names
+
+
+def test_voice_has_gender_and_style_fields(client):
+    voices = client.get("/voices").json()
+    voice = voices[0]
+    assert "gender" in voice
+    assert "style" in voice
+
+
+def test_voice_gender_values_are_valid(client):
+    voices = client.get("/voices").json()
+    valid_genders = {"male", "female", "neutral"}
+    for v in voices:
+        assert v["gender"] in valid_genders
+
+
+def test_all_seeded_voices_have_non_empty_style(client):
+    voices = client.get("/voices").json()
+    for v in voices:
+        assert v["style"] and isinstance(v["style"], str)
