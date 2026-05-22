@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Request
 
 from app import dependencies, seed
 from app.routers import audio_jobs, campaigns, health, voices
-from app.services.errors import NotFound
+from app.services.errors import InvalidOperation, NotFound
 
 app = FastAPI(title="audio-campaign-api")
 
@@ -10,6 +10,11 @@ app = FastAPI(title="audio-campaign-api")
 @app.exception_handler(NotFound)
 def _not_found(_: Request, exc: NotFound) -> HTTPException:
     raise HTTPException(status_code=404, detail=str(exc))
+
+
+@app.exception_handler(InvalidOperation)
+def _invalid_operation(_: Request, exc: InvalidOperation) -> HTTPException:
+    raise HTTPException(status_code=422, detail=str(exc))
 
 
 app.include_router(health.router)
