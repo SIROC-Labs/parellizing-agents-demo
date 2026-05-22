@@ -1,4 +1,4 @@
-from app.models.voice import Voice
+from app.models.voice import Voice, VoiceGender
 
 
 class VoiceRepository:
@@ -14,3 +14,25 @@ class VoiceRepository:
 
     def list(self) -> list[Voice]:
         return list(self._items.values())
+
+    def list_filtered(
+        self,
+        *,
+        locale: str | None = None,
+        gender: VoiceGender | None = None,
+        style: str | None = None,
+        supports_sts: bool | None = None,
+        supports_tts: bool | None = None,
+    ) -> list[Voice]:
+        results = list(self._items.values())
+        if locale is not None:
+            results = [v for v in results if v.locale == locale]
+        if gender is not None:
+            results = [v for v in results if v.gender == gender]
+        if style is not None:
+            results = [v for v in results if v.style == style]
+        if supports_sts is not None:
+            results = [v for v in results if v.supports_sts == supports_sts]
+        if supports_tts is not None:
+            results = [v for v in results if v.supports_tts == supports_tts]
+        return results

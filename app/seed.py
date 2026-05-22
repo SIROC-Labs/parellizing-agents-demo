@@ -12,11 +12,11 @@ def _dt(days_ago: int) -> datetime:
 
 def run(voice_repo, campaign_repo, audio_job_repo) -> None:
     voices = [
-        Voice(id=str(uuid.uuid4()), name="Aria",  provider="elevenlabs", locale="en-US", supports_sts=True,  supports_tts=True),
-        Voice(id=str(uuid.uuid4()), name="Marco", provider="elevenlabs", locale="es-ES", supports_sts=True,  supports_tts=True),
-        Voice(id=str(uuid.uuid4()), name="Yuki",  provider="google",     locale="ja-JP", supports_sts=False, supports_tts=True),
-        Voice(id=str(uuid.uuid4()), name="Lena",  provider="google",     locale="de-DE", supports_sts=False, supports_tts=True),
-        Voice(id=str(uuid.uuid4()), name="James", provider="openai",     locale="en-GB", supports_sts=True,  supports_tts=True),
+        Voice(id=str(uuid.uuid4()), name="Aria",  provider="elevenlabs", locale="en-US", gender="female",  style="conversational", supports_sts=True,  supports_tts=True),
+        Voice(id=str(uuid.uuid4()), name="Marco", provider="elevenlabs", locale="es-ES", gender="male",    style="professional",   supports_sts=True,  supports_tts=True),
+        Voice(id=str(uuid.uuid4()), name="Yuki",  provider="google",     locale="ja-JP", gender="female",  style="professional",   supports_sts=False, supports_tts=True),
+        Voice(id=str(uuid.uuid4()), name="Lena",  provider="google",     locale="de-DE", gender="female",  style="energetic",      supports_sts=False, supports_tts=True),
+        Voice(id=str(uuid.uuid4()), name="James", provider="openai",     locale="en-GB", gender="male",    style="conversational", supports_sts=True,  supports_tts=True),
     ]
     for v in voices:
         voice_repo.add(v)
